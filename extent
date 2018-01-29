@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extentreports>
+    <configuration>
+        <!-- report theme -->
+        <!-- standard, dark -->
+        <theme>dark</theme>
+    
+        <!-- document encoding -->
+        <!-- defaults to UTF-8 -->
+        <encoding>UTF-8</encoding>
+        
+        <!-- protocol for script and stylesheets -->
+        <!-- defaults to https -->
+        <protocol>https</protocol>
+        
+        <!-- title of the document -->
+        <documentTitle>Extent</documentTitle>
+        
+        <!-- report name - displayed at top-nav -->
+        <reportName>Automation Report vishrut</reportName>
+        
+        <!-- location of charts in the test view -->
+        <!-- top, bottom -->
+        <testViewChartLocation>bottom</testViewChartLocation>
+		
+        <!-- custom javascript -->
+        <scripts>
+            <![CDATA[
+                $(document).ready(function() {
+                    
+                });
+            ]]>
+        </scripts>
+        
+        <!-- custom styles -->
+        <styles>
+            <![CDATA[
+                
+            ]]>
+        </styles>
+    </configuration>
+</extentreports>
+
+
+
+
+
+package Testing.Framework_phase1;
+
+import java.io.File;
+import java.lang.reflect.Method;
+
+import org.testng.Assert;
+import org.testng.ITestResult;
+import org.testng.annotations.*;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+
+
+
+public class Extent_report {
+	
+		ExtentReports reports;
+		ExtentTest testInfo;
+		ExtentHtmlReporter htmlReporter;
+		
+		@BeforeTest
+		public void setup()
+		{
+			htmlReporter = new ExtentHtmlReporter(new File(System.getProperty("D:\\PD\\selenium\\vishu_workspace\\Framework_phase1\\Reports\\"+"AutomationReports.html")));
+			htmlReporter.loadXMLConfig(new File(System.getProperty("D:\\PD\\selenium\\vishu_workspace\\Framework_phase1\\Resource\\extent-config.xml")));
+
+			reports = new ExtentReports();
+			reports.setSystemInfo("Enviorment","QA");
+			reports.attachReporter(htmlReporter);
+		}
+
+		@Test
+		public void methodOne()
+		{
+			Assert.assertTrue(true);
+			testInfo.log(Status.INFO,"this is a sample test case One");
+		}
+		
+		@Test
+		public void methodTwo()
+		{
+			Assert.assertTrue(false);
+			testInfo.log(Status.INFO,"this is a sample test case two");
+		}
+		
+		@Test
+		public void methodThree()
+		{
+			Assert.assertTrue(true);
+			testInfo.log(Status.INFO,"this is a sample test case three");
+		}
+
+		@BeforeMethod
+		public void register(Method method)
+		{
+			String testName=method.getName();
+			testInfo=reports.createTest(testName);
+		}
+		
+		@AfterMethod
+		public void captureStatus(ITestResult result)
+		{
+			if(result.getStatus()==ITestResult.SUCCESS)
+			{
+				testInfo.log(Status.PASS,"this method named as "+result.getName()+"is pass");
+			}
+			
+			else if(result.getStatus()==ITestResult.FAILURE)
+			{
+				testInfo.log(Status.FAIL,"this method named as "+result.getName()+"is failed");
+				testInfo.log(Status.FAIL,"test failure: "+result.getThrowable());
+			}
+			else if (result.getStatus()==ITestResult.SKIP)
+			{
+				testInfo.log(Status.SKIP,"this method named as "+result.getName()+"is skipped");
+			}
+			
+			
+		}
+		
+		@AfterTest
+		public void CleanUp()
+		{
+			reports.flush();
+		}
+		
+		
+}
